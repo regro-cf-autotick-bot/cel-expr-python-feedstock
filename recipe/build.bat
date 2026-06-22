@@ -37,9 +37,11 @@ if %ERRORLEVEL% neq 0 exit 1
 copy release\setup.py .
 if %ERRORLEVEL% neq 0 exit 1
 
-@rem Substitute $VERSION in pyproject.toml with the package version.
-sed -i "s/\$VERSION/%PKG_VERSION%/g" pyproject.toml
-if %ERRORLEVEL% neq 0 exit 1
+REM Remove any windows --remote_cache= line from .bazelrc to avoid issues with CI
+sed -i "/windows --remote_cache=/d" .bazelrc
+
+REM Substitute $VERSION in pyproject.toml with the value of PKG_VERSION.
+powershell -NoProfile -Command "(Get-Content pyproject.toml) -replace '\$VERSION', $env:PKG_VERSION | Set-Content pyproject.toml"
 
 @rem Pin the hermetic Python interpreter that rules_python uses to the version
 @rem we are currently building for.
