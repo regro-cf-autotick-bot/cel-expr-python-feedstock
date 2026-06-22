@@ -24,13 +24,15 @@ for %%d in ("%SRC_DIR%") do set "BLDDRIVE=%%~dd"
 set "BAZEL_OB=%BLDDRIVE%\_b"
 md "%BAZEL_OB%" 2>nul
 
-@rem cel-cpp / abseil require C++17 while MSVC defaults to an older standard.
-@rem bazel reads the workspace .bazelrc automatically, so inject the required
-@rem flags there (setup.py invokes bazel itself and we cannot pass flags to it).
+@rem cel-cpp uses designated initializers, which MSVC only accepts under
+@rem /std:c++20 (GCC/Clang allow them as an extension in their C++17 mode, which
+@rem is why the Unix builds work with C++17). bazel reads the workspace .bazelrc
+@rem automatically, so inject the required flags there (setup.py invokes bazel
+@rem itself and we cannot pass flags to it).
 echo.>> .bazelrc
 echo startup --output_base=%BAZEL_OB:\=/%>> .bazelrc
-echo build --cxxopt=/std:c++17>> .bazelrc
-echo build --host_cxxopt=/std:c++17>> .bazelrc
+echo build --cxxopt=/std:c++20>> .bazelrc
+echo build --host_cxxopt=/std:c++20>> .bazelrc
 
 copy release\pyproject.toml .
 if %ERRORLEVEL% neq 0 exit 1
