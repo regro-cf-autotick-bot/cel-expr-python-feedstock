@@ -34,7 +34,6 @@ requirements:
         - sed
       else:
         - m2-sed
-        - posix
   host:
     - python
     - setuptools
