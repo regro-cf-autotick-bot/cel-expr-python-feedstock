@@ -1,0 +1,3 @@
+# Temporarily limit the build matrix to Python 3.14 to save CI resources.
+python:
+  - 3.14.* *_cp314
