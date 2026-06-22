@@ -9,7 +9,7 @@ package:
 
 source:
   url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 5dace0af7d47b153b7b7470001156120c06a59e7e02fa977062bfff894b000e4
+  sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
   patches:
     - 0001-Use-system-dependencies.patch
 
