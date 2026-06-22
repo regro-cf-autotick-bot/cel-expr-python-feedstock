@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: "0.1.1"
+  version: "0.1.2"
 
 package:
   name: cel-expr-python
@@ -9,13 +9,13 @@ package:
 
 source:
   url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: f2e25344cd47a81c92c7e9c4a2595dca5d080bb50981f4522580b0094395159a
+  sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
   patches:
     - 0001-Use-system-dependencies.patch
 
 build:
   skip: match(python, '<3.11') or win
-  number: 3
+  number: 0
 
 requirements:
   build:

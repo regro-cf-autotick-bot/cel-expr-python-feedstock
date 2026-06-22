@@ -4,6 +4,9 @@ set -euxo pipefail
 
 source gen-bazel-toolchain
 
+# Remove any macos --remote_cache= line from .bazelrc to avoid issues with cross-compilation
+sed -i '/macos --remote_cache=/d' .bazelrc
+
 cat >> .bazelrc <<EOF
 
 build --crosstool_top=//bazel_toolchain:toolchain
