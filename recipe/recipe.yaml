@@ -8,15 +8,24 @@ package:
   version: ${{ version }}
 
 source:
-  url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
-  patches:
-    # On Windows bazel builds abseil/protobuf/cel-cpp from the Bazel registry and
-    # links them statically; the conda system-library overrides are only used on
-    # Unix where the abseil_dll setup is compatible.
-    - if: not win
-      then:
-        - 0001-Use-system-dependencies.patch
+  - url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
+    sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
+    patches:
+      # On Windows bazel builds abseil/protobuf/cel-cpp from the Bazel registry
+      # and links them statically; the conda system-library overrides are only
+      # used on Unix where the abseil_dll setup is compatible.
+      - if: not win
+        then:
+          - 0001-Use-system-dependencies.patch
+  # The conda-forge bazel package is built from source and reports `no_version`;
+  # its Windows build is missing the `_cc_internal.freeze` native symbol that
+  # rules_cc requires (see bazelbuild/bazel#29158). Use the official Bazel release
+  # binary on Windows instead.
+  - if: win
+    then:
+      url: https://github.com/bazelbuild/bazel/releases/download/8.7.0/bazel-8.7.0-windows-x86_64.exe
+      file_name: bazel.exe
+      sha256: 29f1796f57379933340afa135f02703ffa21dd30135754bea695f8fd15103420
 
 build:
   skip: match(python, '<3.11')
@@ -27,12 +36,13 @@ requirements:
     - ${{ stdlib('c') }}
     - ${{ compiler('c') }}
     - ${{ compiler('cxx') }}
-    - bazel 8.*
     - if: not win
       then:
+        - bazel 8.*
         - bazel-toolchain
         - sed
       else:
+        - m2-base
         - m2-sed
   host:
     - python

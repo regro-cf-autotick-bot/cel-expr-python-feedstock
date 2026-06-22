@@ -8,6 +8,16 @@ setlocal enabledelayedexpansion
 @rem There is therefore no `bazel-toolchain`/`gen-bazel-toolchain` step here;
 @rem bazel auto-detects the MSVC toolchain provided by the compiler activation.
 
+@rem Use the official Bazel release binary (downloaded as a source into SRC_DIR)
+@rem rather than the conda-forge bazel package, whose Windows build reports
+@rem `no_version` and lacks the `_cc_internal.freeze` symbol required by rules_cc
+@rem (see bazelbuild/bazel#29158). setup.py invokes `bazel` from PATH.
+set "PATH=%SRC_DIR%;%PATH%"
+echo 8.7.0>.bazelversion
+
+@rem Point Bazel at the MSYS2 bash provided by m2-base.
+set "BAZEL_SH=%BUILD_PREFIX%\Library\usr\bin\bash.exe"
+
 @rem Use a short output base on the build drive to avoid Windows MAX_PATH
 @rem issues with the deeply nested bazel output tree.
 for %%d in ("%SRC_DIR%") do set "BLDDRIVE=%%~dd"
