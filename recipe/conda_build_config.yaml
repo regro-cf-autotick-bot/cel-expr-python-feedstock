@@ -1,6 +1,0 @@
-# Temporarily limit the build matrix to Python 3.14 to save CI resources.
-# python is zipped with is_python_min, so both keys must be provided.
-python:
-  - 3.14.* *_cp314
-is_python_min:
-  - false
