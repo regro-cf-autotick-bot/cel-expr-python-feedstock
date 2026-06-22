@@ -11,10 +11,15 @@ source:
   url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
   sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
   patches:
-    - 0001-Use-system-dependencies.patch
+    # On Windows bazel builds abseil/protobuf/cel-cpp from the Bazel registry and
+    # links them statically; the conda system-library overrides are only used on
+    # Unix where the abseil_dll setup is compatible.
+    - if: not win
+      then:
+        - 0001-Use-system-dependencies.patch
 
 build:
-  skip: match(python, '<3.11') or win
+  skip: match(python, '<3.11')
   number: 0
 
 requirements:
@@ -23,17 +28,24 @@ requirements:
     - ${{ compiler('c') }}
     - ${{ compiler('cxx') }}
     - bazel 8.*
-    - bazel-toolchain
-    - sed
+    - if: not win
+      then:
+        - bazel-toolchain
+        - sed
+      else:
+        - m2-sed
+        - posix
   host:
     - python
     - setuptools
-    - libabseil
-    - libabseil-bazel-systemlib
-    - libprotobuf-bazel-systemlib
-    - libprotobuf
-    - protobuf-bazel-rules
     - pip
+    - if: not win
+      then:
+        - libabseil
+        - libabseil-bazel-systemlib
+        - libprotobuf-bazel-systemlib
+        - libprotobuf
+        - protobuf-bazel-rules
   run:
     - python
 
@@ -46,7 +58,8 @@ tests:
 about:
   summary: This is a Python wrapper for the CEL C++ implementation.
   license: Apache-2.0
-  # This bundles cel-spec and cel-cpp under the same license terms
+  # This bundles cel-spec and cel-cpp under the same license terms. On Windows it
+  # additionally bundles abseil and protobuf (both Apache-2.0 / BSD-3-Clause).
   license_file: LICENSE
   homepage: https://github.com/cel-expr/cel-python
   repository: https://github.com/cel-expr/cel-python
