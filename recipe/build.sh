@@ -27,9 +27,10 @@ mkdir -p third_party/systemlibs
 cp -ap "${PREFIX}/share/bazel/systemlibs/absl" third_party/systemlibs/
 cp -ap "${PREFIX}/share/bazel/systemlibs/protobuf" third_party/systemlibs/
 cp -ap "${PREFIX}/share/bazel/protobuf/bazel" third_party/systemlibs/protobuf/
+cp -ap "${PREFIX}/share/bazel/upb" third_party/systemlibs/protobuf/
 
-export ABSEIL_VERSION="$(conda list -p "${PREFIX}" libabseil --fields version | awk '!/^#/ && NF { print $1; exit }')"
-export PROTOC_VERSION="$(conda list -p "${PREFIX}" libprotobuf --fields version | awk '!/^#/ && NF { print $1; exit }' | sed -E 's/^[0-9]+\.([0-9]+\.[0-9]+)$/\1/')"
+export ABSEIL_VERSION="$(grep -oP '(?<="version": ")[^"]+' $PREFIX/conda-meta/libabseil-[0-9]*.json)"
+export PROTOC_VERSION="$(grep -oP '(?<="version": ")[^"]+' $PREFIX/conda-meta/libprotobuf-[0-9]*.json | sed -E 's/^[0-9]+\.([0-9]+\.[0-9]+)$/\1/')"
 sed -i "s:PROTOC_VERSION:${PROTOC_VERSION}:" MODULE.bazel
 sed -i "s:ABSEIL_VERSION:${ABSEIL_VERSION}:" \
     MODULE.bazel \
