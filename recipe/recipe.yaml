@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: "0.1.2"
+  version: "0.1.3"
 
 package:
   name: cel-expr-python
@@ -9,7 +9,7 @@ package:
 
 source:
   - url: https://github.com/cel-expr/cel-python/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 23c4bd72dd8a8b73bddfd96579481b3280d1487641cc26916517f918d8577595
+    sha256: f08f2297c40411ee8d3dc50e0ef3eecad2721d712b7bca2767a4379ce6e24376
     patches:
       # On Windows bazel builds abseil/protobuf/cel-cpp from the Bazel registry
       # and links them statically; the conda system-library overrides are only
@@ -17,6 +17,7 @@ source:
       - if: not win
         then:
           - 0001-Use-system-dependencies.patch
+          - 0002-Use-absl-string-view.patch
   # The conda-forge bazel package is built from source and reports `no_version`;
   # its Windows build is missing the `_cc_internal.freeze` native symbol that
   # rules_cc requires (see bazelbuild/bazel#29158). Use the official Bazel release
